@@ -26,6 +26,8 @@ cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y, y_))
 # Training
 train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
 for i in range(1000):
+  #if i % 100 == 0:
+  #  print "i = " + str(i)
   batch = mnist.train.next_batch(100)
   train_step.run(feed_dict={x: batch[0], y_: batch[1]})
 
@@ -53,6 +55,21 @@ def whatisit(file):
   print(result)
   print(np.argmax(result))
 
+data = batch[0][1]
+for i in range(len(data)):
+  if data[i] > 0:
+    sys.stdout.write("1")
+  else:
+    sys.stdout.write("0")
+  if (i+1) % 28 == 0:
+    print("")
+d = np.array([data])
+result = sess.run(tf.nn.softmax(tf.matmul(d, W) + b))
+print(result)
+print("predict = " + str(np.argmax(result)))
+print("actual = " + str(np.argmax(batch[1][1])))
+
+# My data
 whatisit("0.bmp")
 whatisit("1.bmp")
 whatisit("2.bmp")
