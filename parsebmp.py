@@ -19,6 +19,9 @@ def parse_bmp(file):
   raw = fo.read(4)
 #  print struct.unpack("<BBBB", raw)
 
+  # ??? data
+  raw = fo.read(4)
+
   # Image data
   image = []
   #for i in range(28):
@@ -38,9 +41,9 @@ def parse_bmp(file):
 def ByteToBitList(image, bit):
   for i in range(8)[::-1]:
     if (bit & (2**i)) == 0:
-      image.append(0)
-    else:
       image.append(1)
+    else:
+      image.append(0)
   return image
 
 if __name__ == "__main__":

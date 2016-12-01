@@ -29,6 +29,12 @@ for i in range(1000):
   #if i % 100 == 0:
   #  print "i = " + str(i)
   batch = mnist.train.next_batch(100)
+#  for i in range(len(batch[0])):
+#    for j in range(len(batch[0][i])):
+#      if batch[0][i][j] > 0:
+#        batch[0][i][j] = 1
+#      else:
+#        batch[0][i][j] = 0
   train_step.run(feed_dict={x: batch[0], y_: batch[1]})
 
 # Evaluating
@@ -36,47 +42,53 @@ for i in range(1000):
 #accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 #print(accuracy.eval(feed_dict={x: mnist.test.images, y_: mnist.test.labels}))
 
-# Show y
+
 def whatisit(file):
   data = pb.parse_bmp(file)
 
-# Output data
+  # Output data
   for i in range(len(data)):
-    if data[i] > 0:
-      sys.stdout.write("1")
-    else:
-      sys.stdout.write("0")
+#    if data[i] > 0:
+#      sys.stdout.write("1")
+#    else:
+#      sys.stdout.write("0")
+    sys.stdout.write(str(int(data[i])))
     if (i+1) % 28 == 0:
       print("")
 
-# Predicting
+  # Predicting
   d = np.array([data])
   result = sess.run(tf.nn.softmax(tf.matmul(d, W) + b))
   print(result)
   print(np.argmax(result))
 
-data = batch[0][1]
-for i in range(len(data)):
-  if data[i] > 0:
-    sys.stdout.write("1")
-  else:
-    sys.stdout.write("0")
-  if (i+1) % 28 == 0:
-    print("")
-d = np.array([data])
-result = sess.run(tf.nn.softmax(tf.matmul(d, W) + b))
-print(result)
-print("predict = " + str(np.argmax(result)))
-print("actual = " + str(np.argmax(batch[1][1])))
-
-# My data
-whatisit("0.bmp")
-whatisit("1.bmp")
-whatisit("2.bmp")
-whatisit("3.bmp")
-whatisit("4.bmp")
-whatisit("5.bmp")
-whatisit("6.bmp")
-whatisit("7.bmp")
-whatisit("8.bmp")
-whatisit("9.bmp")
+if __name__ == "__main__":
+  # Mnist data
+  data = batch[0][1]
+  for i in range(len(data)):
+    if data[i] > 0:
+#      sys.stdout.write("1")
+      data[i] = 1
+    else:
+#      sys.stdout.write("0")
+      data[i] = 0
+    sys.stdout.write(str(int(data[i])))
+    if (i+1) % 28 == 0:
+      print("")
+  d = np.array([data])
+  result = sess.run(tf.nn.softmax(tf.matmul(d, W) + b))
+  print(result)
+  print("predict = " + str(np.argmax(result)))
+  print("actual = " + str(np.argmax(batch[1][1])))
+  
+  # My data
+  whatisit("0.bmp")
+  whatisit("1.bmp")
+  whatisit("2.bmp")
+  whatisit("3.bmp")
+  whatisit("4.bmp")
+  whatisit("5.bmp")
+  whatisit("6.bmp")
+  whatisit("7.bmp")
+  whatisit("8.bmp")
+  whatisit("9.bmp")
