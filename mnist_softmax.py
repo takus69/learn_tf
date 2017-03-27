@@ -1,31 +1,48 @@
 from tensorflow.examples.tutorials.mnist import input_data
 import tensorflow as tf
+import sys
+import numpy as np
+import parsebmp as pb
 
-# Download gz files to MNIST_data directory
-mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
+def whatisit(file, sess):
+  print("File name is %s" % file)
+  data = pb.parse_bmp(file)
 
-# Initializing
-sess = tf.InteractiveSession()
+  # Show bmp data
+  for i in range(len(data)):
+    sys.stdout.write(str(int(data[i])))
+    if (i+1) % 28 == 0:
+      print("")
 
-x = tf.placeholder(tf.float32, shape=[None, 28*28])
-y_ = tf.placeholder(tf.float32, shape=[None, 10])
+  # Predicting
+  d = np.array([data])
+  result = sess.run(y, feed_dict={x: d})
 
-W = tf.Variable(tf.zeros([28*28, 10]))
-b = tf.Variable(tf.zeros([10]))
+  # Show result
+  print(result)
+  print(np.argmax(result, 1))
 
-sess.run(tf.initialize_all_variables())
 
-# Making model
-y = tf.matmul(x, W) + b
-cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(y, y_))
+if __name__ == "__main__":
+  # Restore parameters
+  x = tf.placeholder(tf.float32, shape=[None, 28*28])
+  y_ = tf.placeholder(tf.float32, shape=[None, 10])
+  W = tf.Variable(tf.zeros([28*28, 10]), name="W")
+  b = tf.Variable(tf.zeros([10]), name="b")
+  y = tf.matmul(x, W) + b
+  
+  sess = tf.InteractiveSession()
+  saver = tf.train.Saver()
+  saver.restore(sess, 'param/softmax.param')
 
-# Training
-train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
-for i in range(1000):
-  batch = mnist.train.next_batch(100)
-  train_step.run(feed_dict={x: batch[0], y_: batch[1]})
-
-# Evaluating
-correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
-accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-print(accuracy.eval(feed_dict={x: mnist.test.images, y_: mnist.test.labels}))
+  # My data
+  whatisit("My_data/0.bmp", sess)
+  whatisit("My_data/1.bmp", sess)
+  whatisit("My_data/2.bmp", sess)
+  whatisit("My_data/3.bmp", sess)
+  whatisit("My_data/4.bmp", sess)
+  whatisit("My_data/5.bmp", sess)
+  whatisit("My_data/6.bmp", sess)
+  whatisit("My_data/7.bmp", sess)
+  whatisit("My_data/8.bmp", sess)
+  whatisit("My_data/9.bmp", sess)
